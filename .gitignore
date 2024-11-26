@@ -1,0 +1,26 @@
+/.vs
+.DS_Store
+.Thumbs.db
+*.sublime*
+.idea/
+debug.log
+package-lock.json
+.vscode/settings.json
+yarn.lock
+
+/.tauri
+/target
+Cargo.lock
+node_modules/
+
+dist-js
+dist
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
