@@ -1,24 +1,19 @@
-use hoppscotch_relay::{RelayResult, RequestWithMetadata, ResponseWithMetadata};
+use hoppscotch_relay::{
+    error::InterceptorError, Request as RelayRequest, Response as RelayResponse,
+};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct RunRequest {
-    pub req: RequestWithMetadata,
+pub type RunRequest = RelayRequest;
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "kind")]
+pub enum ExecuteResponse {
+    #[serde(rename = "success")]
+    Success { response: RelayResponse },
+    #[serde(rename = "error")]
+    Error { error: InterceptorError },
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct RunResponse {
-    pub value: RelayResult<ResponseWithMetadata>,
-}
+pub type CancelRequest = i64;
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CancelRequest {
-    pub req_id: usize,
-}
-
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CancelResponse {}
+pub type CancelResponse = ();

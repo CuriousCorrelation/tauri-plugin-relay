@@ -1,80 +1,116 @@
-export interface KeyValuePair {
-    key: string;
-    value: string;
-}
-export type FormDataValue = {
-    type: 'Text';
-    value: string;
-} | {
-    type: 'File';
-    filename: string;
-    data: Uint8Array;
-    mime: string;
-};
-export interface FormDataEntry {
-    key: string;
-    value: FormDataValue;
-}
-export type BodyDef = {
-    type: 'Text';
+export type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+export type ContentType = {
+    kind: 'text';
     content: string;
 } | {
-    type: 'URLEncoded';
-    content: KeyValuePair[];
+    kind: "json";
+    content: unknown;
 } | {
-    type: 'FormData';
-    content: FormDataEntry[];
+    kind: 'form';
+    content: FormData;
+} | {
+    kind: 'urlencoded';
+    content: Record<string, string>;
 };
-export type ClientCertDef = {
-    type: 'PEMCert';
-    certificatePem: Uint8Array;
-    keyPem: Uint8Array;
+export type AuthType = {
+    kind: "none";
 } | {
-    type: 'PFXCert';
-    certificatePfx: Uint8Array;
+    kind: "basic";
+    username: string;
+    password: string;
+} | {
+    kind: "bearer";
+    token: string;
+} | {
+    kind: "digest";
+    username: string;
+    password: string;
+    realm?: string;
+    nonce?: string;
+    opaque?: string;
+    algorithm?: "MD5" | "SHA-256" | "SHA-512";
+    qop?: "auth" | "auth-int";
+};
+export type CertificateType = {
+    kind: "pem";
+    cert: Uint8Array;
+    key: Uint8Array;
+} | {
+    kind: "pfx";
+    data: Uint8Array;
     password: string;
 };
-export interface ProxyConfig {
+export interface Request {
+    id: number;
     url: string;
+    method: Method;
+    headers?: Record<string, string | string[]>;
+    params?: Record<string, string>;
+    content?: ContentType;
+    auth?: AuthType;
+    security?: {
+        certificates?: {
+            client?: CertificateType;
+            ca?: Array<Uint8Array>;
+        };
+        validateCertificates: boolean;
+        verifyHost: boolean;
+    };
+    proxy?: {
+        url: string;
+    };
 }
-export interface RequestWithMetadata {
-    reqId: number;
-    method: string;
-    endpoint: string;
-    headers: KeyValuePair[];
-    body?: BodyDef;
-    validateCerts: boolean;
-    rootCertBundleFiles: Uint8Array[];
-    clientCert?: ClientCertDef;
-    proxy?: ProxyConfig;
-}
-export interface ResponseWithMetadata {
+export interface Response {
+    id: number;
     status: number;
     statusText: string;
-    headers: KeyValuePair[];
-    data: Uint8Array;
-    timeStartMs: number;
-    timeEndMs: number;
+    headers: Record<string, string>;
+    content: ContentType;
+    meta: {
+        timing: {
+            start: number;
+            end: number;
+        };
+        size: {
+            headers: number;
+            body: number;
+            total: number;
+        };
+    };
 }
-export declare enum RelayError {
-    InvalidMethod = "InvalidMethod",
-    InvalidUrl = "InvalidUrl",
-    InvalidHeaders = "InvalidHeaders",
-    RequestCancelled = "RequestCancelled",
-    RequestRunError = "RequestRunError"
-}
-export type RelayResult<T> = T | RelayError;
-export interface RunOptions {
-    req: RequestWithMetadata;
-}
-export interface RunResponse {
-    value: RelayResult<ResponseWithMetadata>;
-}
-export interface CancelOptions {
-    reqId: number;
-}
-export interface CancelResponse {
-}
-export declare function run(options: RunOptions): Promise<RunResponse>;
-export declare function cancel(options: CancelOptions): Promise<CancelResponse>;
+export type UnsupportedFeatureError = {
+    kind: "unsupported_feature";
+    feature: string;
+    message: string;
+    interceptor: string;
+};
+export type InterceptorError = UnsupportedFeatureError | {
+    kind: "network";
+    message: string;
+    cause?: unknown;
+} | {
+    kind: "timeout";
+    message: string;
+    phase?: "connect" | "tls" | "response";
+} | {
+    kind: "certificate";
+    message: string;
+    cause?: unknown;
+} | {
+    kind: "parse";
+    message: string;
+    cause?: unknown;
+} | {
+    kind: "abort";
+    message: string;
+};
+export type RequestResult = {
+    kind: 'success';
+    response: Response;
+} | {
+    kind: 'error';
+    error: InterceptorError;
+};
+export declare function execute(request: Request): Promise<RequestResult>;
+export declare function cancel(requestId: number): Promise<void>;
 //# sourceMappingURL=index.d.ts.map

@@ -1,27 +1,42 @@
+use crate::{models::*, Result};
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
-
-use crate::{models::*, Result};
 
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
     _api: PluginApi<R, C>,
 ) -> Result<HoppscotchRelay<R>> {
+    tracing::debug!("Initializing HoppscotchRelay for desktop platform");
     Ok(HoppscotchRelay(app.clone()))
 }
 
-/// Access to the hoppscotch-relay APIs.
 pub struct HoppscotchRelay<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> HoppscotchRelay<R> {
-    pub fn run(&self, payload: RunRequest) -> Result<RunResponse> {
-        Ok(RunResponse {
-            value: hoppscotch_relay::run(payload.req),
-        })
+    pub async fn execute(&self, request: RunRequest) -> Result<ExecuteResponse> {
+        tracing::debug!(?request, "Executing request");
+
+        match hoppscotch_relay::execute(request).await {
+            Ok(response) => {
+                tracing::debug!("Request executed successfully");
+                Ok(ExecuteResponse::Success { response })
+            }
+            Err(error) => {
+                tracing::error!(?error, "Request execution failed");
+                Ok(ExecuteResponse::Error { error })
+            }
+        }
     }
 
-    pub fn cancel(&self, payload: CancelRequest) -> Result<CancelResponse> {
-        hoppscotch_relay::cancel(payload.req_id);
-        Ok(CancelResponse {})
+    pub async fn cancel(&self, request_id: CancelRequest) -> Result<CancelResponse> {
+        tracing::debug!(?request_id, "Cancelling request");
+
+        if let Err(e) = hoppscotch_relay::cancel(request_id).await {
+            tracing::error!(?e, "Request cancellation failed");
+            return Err(e.into());
+        }
+
+        tracing::debug!("Request cancelled successfully");
+        Ok(())
     }
 }

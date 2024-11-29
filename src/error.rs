@@ -6,6 +6,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[error(transparent)]
+    Interceptor(#[from] hoppscotch_relay::error::InterceptorError),
     #[cfg(mobile)]
     #[error(transparent)]
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
@@ -16,6 +18,7 @@ impl Serialize for Error {
     where
         S: Serializer,
     {
+        tracing::error!(?self, "Serializing error");
         serializer.serialize_str(self.to_string().as_ref())
     }
 }

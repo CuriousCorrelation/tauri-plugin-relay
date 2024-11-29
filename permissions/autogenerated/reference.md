@@ -2,7 +2,7 @@
 
 Default permissions for the plugin
 
-- `allow-run`
+- `allow-execute`
 - `allow-cancel`
 
 ## Permission Table
@@ -43,6 +43,32 @@ Denies the cancel command without any pre-configured scope.
 <tr>
 <td>
 
+`hoppscotch-relay:allow-execute`
+
+</td>
+<td>
+
+Enables the execute command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`hoppscotch-relay:deny-execute`
+
+</td>
+<td>
+
+Denies the execute command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `hoppscotch-relay:allow-run`
 
 </td>
@@ -62,6 +88,32 @@ Enables the run command without any pre-configured scope.
 <td>
 
 Denies the run command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`hoppscotch-relay:allow-subscribe`
+
+</td>
+<td>
+
+Enables the subscribe command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`hoppscotch-relay:deny-subscribe`
+
+</td>
+<td>
+
+Denies the subscribe command without any pre-configured scope.
 
 </td>
 </tr>

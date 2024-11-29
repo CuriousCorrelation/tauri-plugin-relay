@@ -1,4 +1,4 @@
-const COMMANDS: &[&str] = &["run", "cancel"];
+const COMMANDS: &[&str] = &["execute", "cancel", "subscribe"];
 
 fn main() {
     tauri_plugin::Builder::new(COMMANDS)

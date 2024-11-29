@@ -12,7 +12,7 @@ Install the Core plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-hoppscotch-relay = { git = "https://github.com/hoppscotch/tauri-plugin-hoppscotch-relay" }
+tauri-plugin-hoppscotch-relay = { git = "https://github.com/CuriousCorrelation/tauri-plugin-hoppscotch-relay" }
 ```
 
 Install the JavaScript Guest bindings using your preferred JavaScript package manager:

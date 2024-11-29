@@ -1,18 +1,38 @@
+use crate::{models::*, HoppscotchRelayExt, Result};
 use tauri::{command, AppHandle, Runtime};
 
-use crate::models::*;
-use crate::HoppscotchRelayExt;
-use crate::Result;
-
 #[command]
-pub(crate) async fn run<R: Runtime>(app: AppHandle<R>, payload: RunRequest) -> Result<RunResponse> {
-    app.hoppscotch_relay().run(payload)
+pub(crate) async fn execute<R: Runtime>(
+    app: AppHandle<R>,
+    request: RunRequest,
+) -> Result<ExecuteResponse> {
+    tracing::debug!(?request, "Received execute command");
+    let response = app.hoppscotch_relay().execute(request).await;
+
+    match &response {
+        Ok(_) => {
+            tracing::info!("Execute command completed successfully");
+        }
+        Err(e) => {
+            tracing::error!(?e, "Execute command failed");
+        }
+    }
+
+    response
 }
 
 #[command]
 pub(crate) async fn cancel<R: Runtime>(
     app: AppHandle<R>,
-    payload: CancelRequest,
+    request_id: CancelRequest,
 ) -> Result<CancelResponse> {
-    app.hoppscotch_relay().cancel(payload)
+    tracing::debug!(?request_id, "Received cancel command");
+    let response = app.hoppscotch_relay().cancel(request_id).await;
+
+    match &response {
+        Ok(_) => tracing::info!("Cancel command completed successfully"),
+        Err(e) => tracing::error!(?e, "Cancel command failed"),
+    }
+
+    response
 }

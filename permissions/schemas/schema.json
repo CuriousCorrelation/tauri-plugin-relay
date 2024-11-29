@@ -305,6 +305,16 @@
           "const": "deny-cancel"
         },
         {
+          "description": "Enables the execute command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-execute"
+        },
+        {
+          "description": "Denies the execute command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-execute"
+        },
+        {
           "description": "Enables the run command without any pre-configured scope.",
           "type": "string",
           "const": "allow-run"
@@ -313,6 +323,16 @@
           "description": "Denies the run command without any pre-configured scope.",
           "type": "string",
           "const": "deny-run"
+        },
+        {
+          "description": "Enables the subscribe command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-subscribe"
+        },
+        {
+          "description": "Denies the subscribe command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-subscribe"
         },
         {
           "description": "Default permissions for the plugin",

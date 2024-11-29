@@ -1,104 +1,163 @@
 use serde::{Deserialize, Serialize};
+use std::{collections::HashMap, fmt};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct KeyValuePair {
-    pub key: String,
-    pub value: String,
+#[serde(rename_all = "UPPERCASE")]
+pub enum Method {
+    Get,
+    Post,
+    Put,
+    Delete,
+    Patch,
+    Head,
+    Options,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum FormDataValue {
-    Text(String),
-    File {
-        filename: String,
-        data: Vec<u8>,
-        mime: String,
-    },
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct FormDataEntry {
-    pub key: String,
-    pub value: FormDataValue,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum BodyDef {
-    Text(String),
-    URLEncoded(Vec<KeyValuePair>),
-    FormData(Vec<FormDataEntry>),
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct RequestWithMetadata {
-    pub req_id: usize,
-    pub method: String,
-    pub endpoint: String,
-    pub headers: Vec<KeyValuePair>,
-    pub body: Option<BodyDef>,
-    pub validate_certs: bool,
-    pub root_cert_bundle_files: Vec<Vec<u8>>,
-    pub client_cert: Option<ClientCertDef>,
-    pub proxy: Option<ProxyConfig>,
-}
-
-impl RequestWithMetadata {
-    pub fn new(
-        req_id: usize,
-        method: String,
-        endpoint: String,
-        headers: Vec<KeyValuePair>,
-        body: Option<BodyDef>,
-        validate_certs: bool,
-        root_cert_bundle_files: Vec<Vec<u8>>,
-        client_cert: Option<ClientCertDef>,
-        proxy: Option<ProxyConfig>,
-    ) -> Self {
-        Self {
-            req_id,
-            method,
-            endpoint,
-            headers,
-            body,
-            validate_certs,
-            root_cert_bundle_files,
-            client_cert,
-            proxy,
-        }
+impl fmt::Display for Method {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let method = match self {
+            Self::Get => "GET",
+            Self::Post => "POST",
+            Self::Put => "PUT",
+            Self::Delete => "DELETE",
+            Self::Patch => "PATCH",
+            Self::Head => "HEAD",
+            Self::Options => "OPTIONS",
+        };
+        write!(f, "{}", method)
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind")]
 #[serde(rename_all = "camelCase")]
-pub struct ProxyConfig {
+pub enum ContentType {
+    #[serde(rename = "text")]
+    Text { content: String },
+    #[serde(rename = "json")]
+    Json { content: serde_json::Value },
+    #[serde(rename = "form")]
+    Form { content: HashMap<String, Vec<u8>> },
+    #[serde(rename = "urlencoded")]
+    UrlEncoded { content: HashMap<String, String> },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind")]
+#[serde(rename_all = "camelCase")]
+pub enum AuthType {
+    #[serde(rename = "none")]
+    None,
+    #[serde(rename = "basic")]
+    Basic { username: String, password: String },
+    #[serde(rename = "bearer")]
+    Bearer { token: String },
+    #[serde(rename = "digest")]
+    Digest {
+        username: String,
+        password: String,
+        realm: Option<String>,
+        nonce: Option<String>,
+        opaque: Option<String>,
+        algorithm: Option<DigestAlgorithm>,
+        qop: Option<DigestQop>,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DigestAlgorithm {
+    #[serde(rename = "MD5")]
+    Md5,
+    #[serde(rename = "SHA-256")]
+    Sha256,
+    #[serde(rename = "SHA-512")]
+    Sha512,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DigestQop {
+    #[serde(rename = "auth")]
+    Auth,
+    #[serde(rename = "auth-int")]
+    AuthInt,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind")]
+#[serde(rename_all = "camelCase")]
+pub enum CertificateType {
+    #[serde(rename = "pem")]
+    Pem { cert: Vec<u8>, key: Vec<u8> },
+    #[serde(rename = "pfx")]
+    Pfx { data: Vec<u8>, password: String },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Security {
+    pub certificates: Option<SecurityCertificates>,
+    pub validate_certificates: bool,
+    pub verify_host: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SecurityCertificates {
+    pub client: Option<CertificateType>,
+    pub ca: Option<Vec<Vec<u8>>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Proxy {
     pub url: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub enum ClientCertDef {
-    PEMCert {
-        certificate_pem: Vec<u8>,
-        key_pem: Vec<u8>,
-    },
-    PFXCert {
-        certificate_pfx: Vec<u8>,
-        password: String,
-    },
+pub struct Request {
+    pub id: i64,
+    pub url: String,
+    pub method: Method,
+    pub headers: Option<HashMap<String, Vec<String>>>,
+    pub params: Option<HashMap<String, String>>,
+    pub content: Option<ContentType>,
+    pub auth: Option<AuthType>,
+    pub security: Option<Security>,
+    pub proxy: Option<Proxy>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ResponseWithMetadata {
+pub struct Response {
+    pub id: i64,
     pub status: u16,
     pub status_text: String,
-    pub headers: Vec<KeyValuePair>,
-    pub data: Vec<u8>,
-    pub time_start_ms: u128,
-    pub time_end_ms: u128,
+    pub headers: HashMap<String, Vec<String>>,
+    pub content: ContentType,
+    pub meta: ResponseMeta,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ResponseMeta {
+    pub timing: TimingInfo,
+    pub size: SizeInfo,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TimingInfo {
+    pub start: u64,
+    pub end: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SizeInfo {
+    pub headers: u64,
+    pub body: u64,
+    pub total: u64,
 }

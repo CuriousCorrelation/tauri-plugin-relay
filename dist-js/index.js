@@ -1,18 +1,10 @@
 import { invoke } from '@tauri-apps/api/core';
 
-var RelayError;
-(function (RelayError) {
-    RelayError["InvalidMethod"] = "InvalidMethod";
-    RelayError["InvalidUrl"] = "InvalidUrl";
-    RelayError["InvalidHeaders"] = "InvalidHeaders";
-    RelayError["RequestCancelled"] = "RequestCancelled";
-    RelayError["RequestRunError"] = "RequestRunError";
-})(RelayError || (RelayError = {}));
-async function run(options) {
-    return await invoke('plugin:hoppscotch-relay|run', { options });
+async function execute(request) {
+    return await invoke('plugin:hoppscotch-relay|execute', { request });
 }
-async function cancel(options) {
-    return await invoke('plugin:hoppscotch-relay|cancel', { options });
+async function cancel(requestId) {
+    return await invoke('plugin:hoppscotch-relay|cancel', { requestId });
 }
 
-export { RelayError, cancel, run };
+export { cancel, execute };

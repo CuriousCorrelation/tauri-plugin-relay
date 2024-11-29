@@ -1,15 +1,14 @@
+mod auth;
+mod content;
 pub mod error;
-pub mod interop;
-pub mod relay;
-pub mod util;
+mod header;
+mod interop;
+mod relay;
+mod request;
+mod response;
+mod security;
+mod transfer;
+mod util;
 
-pub use error::{RelayError, RelayResult};
-pub use interop::{RequestWithMetadata, ResponseWithMetadata};
-
-pub fn run(req: RequestWithMetadata) -> RelayResult<ResponseWithMetadata> {
-    relay::run(req)
-}
-
-pub fn cancel(req_id: usize) {
-    relay::cancel(req_id)
-}
+pub use relay::{cancel, execute};
+pub use interop::{Request, Response};
