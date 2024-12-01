@@ -13,6 +13,12 @@ export type ContentType =
   | { kind: 'text'; content: string }
   | { kind: "json"; content: unknown }
   | { kind: 'form'; content: FormData }
+  | {
+      kind: 'binary';
+      content: Uint8Array;
+      mediaType?: string;
+      filename?: string;
+    }
   | { kind: 'urlencoded'; content: Record<string, string> }
 
 export type AuthType =
@@ -46,7 +52,7 @@ export interface Request {
   id: number
   url: string
   method: Method
-  headers?: Record<string, string | string[]>
+  headers?: Record<string, string[]>
   params?: Record<string, string>
   content?: ContentType
   auth?: AuthType
@@ -69,7 +75,7 @@ export interface Response {
   id: number
   status: number
   statusText: string
-  headers: Record<string, string>
+  headers: Record<string, string[]>
   content: ContentType
 
   meta: {

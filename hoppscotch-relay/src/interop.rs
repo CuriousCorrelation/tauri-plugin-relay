@@ -38,6 +38,12 @@ pub enum ContentType {
     Json { content: serde_json::Value },
     #[serde(rename = "form")]
     Form { content: HashMap<String, Vec<u8>> },
+    #[serde(rename = "binary")]
+    Binary {
+        content: Vec<u8>,
+        media_type: Option<String>,
+        filename: Option<String>,
+    },
     #[serde(rename = "urlencoded")]
     UrlEncoded { content: HashMap<String, String> },
 }
