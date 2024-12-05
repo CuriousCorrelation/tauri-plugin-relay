@@ -1,40 +1,117 @@
 import { invoke } from '@tauri-apps/api/core'
 
 export type Method =
-  | "GET"
-  | "POST"
-  | "PUT"
-  | "DELETE"
-  | "PATCH"
-  | "HEAD"
-  | "OPTIONS"
+  | "GET"     // Retrieve resource
+  | "POST"    // Create resource
+  | "PUT"     // Replace resource
+  | "DELETE"  // Remove resource
+  | "PATCH"   // Modify resource
+  | "HEAD"    // GET without body
+  | "OPTIONS" // Get allowed methods
+  | "CONNECT" // Create tunnel
+  | "TRACE"   // Loop-back test
+
+export type Protocol = "http/1.0" | "http/1.1" | "http/2" | "http/3"
+
+export type StatusCode =
+    | 100  // Continue
+    | 101  // Switching Protocols
+    | 102  // Processing
+    | 103  // Early Hints
+    | 200  // OK
+    | 201  // Created
+    | 202  // Accepted
+    | 203  // Non-Authoritative Info
+    | 204  // No Content
+    | 205  // Reset Content
+    | 206  // Partial Content
+    | 207  // Multi-Status
+    | 208  // Already Reported
+    | 226  // IM Used
+    | 300  // Multiple Choices
+    | 301  // Moved Permanently
+    | 302  // Found
+    | 303  // See Other
+    | 304  // Not Modified
+    | 305  // Use Proxy
+    | 306  // Switch Proxy
+    | 307  // Temporary Redirect
+    | 308  // Permanent Redirect
+    | 400  // Bad Request
+    | 401  // Unauthorized
+    | 402  // Payment Required
+    | 403  // Forbidden
+    | 404  // Not Found
+    | 405  // Method Not Allowed
+    | 406  // Not Acceptable
+    | 407  // Proxy Auth Required
+    | 408  // Request Timeout
+    | 409  // Conflict
+    | 410  // Gone
+    | 411  // Length Required
+    | 412  // Precondition Failed
+    | 413  // Payload Too Large
+    | 414  // URI Too Long
+    | 415  // Unsupported Media
+    | 416  // Range Not Satisfiable
+    | 417  // Expectation Failed
+    | 418  // I'm a teapot
+    | 421  // Misdirected Request
+    | 422  // Unprocessable Entity
+    | 423  // Locked
+    | 424  // Failed Dependency
+    | 425  // Too Early
+    | 426  // Upgrade Required
+    | 428  // Precondition Required
+    | 429  // Too Many Requests
+    | 431  // Headers Too Large
+    | 451  // Unavailable Legal
+    | 500  // Server Error
+    | 501  // Not Implemented
+    | 502  // Bad Gateway
+    | 503  // Service Unavailable
+    | 504  // Gateway Timeout
+    | 505  // HTTP Ver. Not Supported
+    | 506  // Variant Negotiates
+    | 507  // Insufficient Storage
+    | 508  // Loop Detected
+    | 510  // Not Extended
+    | 511  // Network Auth Required
 
 export type ContentType =
-  | { kind: 'text'; content: string }
-  | { kind: "json"; content: unknown }
-  | { kind: 'form'; content: FormData }
-  | {
-      kind: 'binary';
-      content: Uint8Array;
-      mediaType?: string;
-      filename?: string;
+    | { kind: "text"; content: string; mediaType: "text/plain" | "text/html" | "text/css" | "text/csv" }
+    | { kind: "json"; content: unknown; mediaType: "application/json" | "application/ld+json" }
+    | { kind: "xml"; content: string; mediaType: "application/xml" | "text/xml" }
+    | { kind: "form"; content: FormData; mediaType: "application/x-www-form-urlencoded" }
+    | {
+        kind: "binary"
+        content: Uint8Array
+        mediaType: "application/octet-stream" | string
+        filename?: string
     }
-  | { kind: 'urlencoded'; content: Record<string, string> }
+    | { kind: "multipart"; content: FormData; mediaType: "multipart/form-data" }
+    | {
+        kind: "urlencoded"
+        content: Record<string, string>
+        mediaType: "application/x-www-form-urlencoded"
+    }
 
 export type AuthType =
-  | { kind: "none" }
-  | { kind: "basic"; username: string; password: string }
-  | { kind: "bearer"; token: string }
-  | {
-    kind: "digest"
-    username: string
-    password: string
-    realm?: string
-    nonce?: string
-    opaque?: string
-    algorithm?: "MD5" | "SHA-256" | "SHA-512"
-    qop?: "auth" | "auth-int"
-  }
+    | { kind: "none" }
+    | { kind: "basic"; username: string; password: string }
+    | { kind: "bearer"; token: string }
+    | {
+        kind: "digest"
+        username: string
+        password: string
+        realm?: string
+        nonce?: string
+        opaque?: string
+        algorithm?: "MD5" | "SHA-256" | "SHA-512"
+        qop?: "auth" | "auth-int"
+        nc?: string
+        cnonce?: string
+    }
 
 export type CertificateType =
   | {
@@ -52,8 +129,9 @@ export interface Request {
   id: number
   url: string
   method: Method
+  protocol: Protocol
   headers?: Record<string, string[]>
-  params?: Record<string, string>
+  params?: Record<string, string[]>
   content?: ContentType
   auth?: AuthType
 
@@ -62,20 +140,36 @@ export interface Request {
       client?: CertificateType
       ca?: Array<Uint8Array>
     }
-    validateCertificates: boolean
-    verifyHost: boolean
+    validateCertificates?: boolean
+    verifyHost?: boolean
+    verifyPeer?: boolean
   }
 
   proxy?: {
     url: string
+    auth?: {
+      username: string
+      password: string
+    }
   }
 }
 
 export interface Response {
   id: number
-  status: number
+  status: StatusCode
   statusText: string
+  protocol: Protocol
   headers: Record<string, string[]>
+  cookies?: Array<{
+    name: string
+    value: string
+    domain?: string
+    path?: string
+    expires?: Date
+    secure?: boolean
+    httpOnly?: boolean
+    sameSite?: 'Strict' | 'Lax' | 'None'
+  }>
   content: ContentType
 
   meta: {
@@ -95,10 +189,10 @@ export type UnsupportedFeatureError = {
   kind: "unsupported_feature"
   feature: string
   message: string
-  interceptor: string
+  relay: string
 }
 
-export type InterceptorError =
+export type RelayError =
   | UnsupportedFeatureError
   | { kind: "network"; message: string; cause?: unknown }
   | { kind: "timeout"; message: string; phase?: "connect" | "tls" | "response" }
@@ -108,7 +202,7 @@ export type InterceptorError =
 
 export type RequestResult =
   | { kind: 'success'; response: Response }
-  | { kind: 'error'; error: InterceptorError }
+  | { kind: 'error'; error: RelayError }
 
 export async function execute(request: Request): Promise<RequestResult> {
   return await invoke<RequestResult>('plugin:hoppscotch-relay|execute', { request })

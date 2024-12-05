@@ -16,7 +16,7 @@ impl<R: Runtime> HoppscotchRelay<R> {
     pub async fn execute(&self, request: RunRequest) -> Result<ExecuteResponse> {
         tracing::debug!(?request, "Executing request");
 
-        match hoppscotch_relay::execute(request).await {
+        match relay::execute(request).await {
             Ok(response) => {
                 tracing::debug!("Request executed successfully");
                 Ok(ExecuteResponse::Success { response })
@@ -31,7 +31,7 @@ impl<R: Runtime> HoppscotchRelay<R> {
     pub async fn cancel(&self, request_id: CancelRequest) -> Result<CancelResponse> {
         tracing::debug!(?request_id, "Cancelling request");
 
-        if let Err(e) = hoppscotch_relay::cancel(request_id).await {
+        if let Err(e) = relay::cancel(request_id).await {
             tracing::error!(?e, "Request cancellation failed");
             return Err(e.into());
         }

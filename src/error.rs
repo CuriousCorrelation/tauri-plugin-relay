@@ -7,7 +7,7 @@ pub enum Error {
     #[error(transparent)]
     Io(#[from] std::io::Error),
     #[error(transparent)]
-    Interceptor(#[from] hoppscotch_relay::error::InterceptorError),
+    Relay(#[from] relay::error::RelayError),
     #[cfg(mobile)]
     #[error(transparent)]
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
