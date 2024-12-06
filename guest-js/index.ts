@@ -11,7 +11,7 @@ export type Method =
   | "CONNECT" // Create tunnel
   | "TRACE"   // Loop-back test
 
-export type Protocol = "http/1.0" | "http/1.1" | "http/2" | "http/3"
+export type Version = "HTTP/1.0" | "HTTP/1.1" | "HTTP/2" | "HTTP/3"
 
 export type StatusCode =
     | 100  // Continue
@@ -129,7 +129,7 @@ export interface Request {
   id: number
   url: string
   method: Method
-  protocol: Protocol
+  version: Version
   headers?: Record<string, string[]>
   params?: Record<string, string[]>
   content?: ContentType
@@ -158,7 +158,7 @@ export interface Response {
   id: number
   status: StatusCode
   statusText: string
-  protocol: Protocol
+  version: Version
   headers: Record<string, string[]>
   cookies?: Array<{
     name: string
