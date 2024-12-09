@@ -51,6 +51,31 @@ export type AuthType = {
     qop?: "auth" | "auth-int";
     nc?: string;
     cnonce?: string;
+} | {
+    kind: "oauth2";
+    grantType: {
+        kind: "authorization_code";
+        authEndpoint: string;
+        tokenEndpoint: string;
+        clientId: string;
+        clientSecret?: string;
+    } | {
+        kind: "client_credentials";
+        tokenEndpoint: string;
+        clientId: string;
+        clientSecret?: string;
+    } | {
+        kind: "password";
+        tokenEndpoint: string;
+        username: string;
+        password: string;
+    } | {
+        kind: "implicit";
+        authEndpoint: string;
+        clientId: string;
+    };
+    accessToken?: string;
+    refreshToken?: string;
 };
 export type CertificateType = {
     kind: "pem";
