@@ -122,8 +122,8 @@ export interface Request {
     url: string;
     method: Method;
     version: Version;
-    headers?: Record<string, string[]>;
-    params?: Record<string, string[]>;
+    headers?: Record<string, string>;
+    params?: Record<string, string>;
     content?: ContentType;
     auth?: AuthType;
     security?: {
@@ -148,7 +148,7 @@ export interface Response {
     status: StatusCode;
     statusText: string;
     version: Version;
-    headers: Record<string, string[]>;
+    headers: Record<string, string>;
     cookies?: Array<{
         name: string;
         value: string;
