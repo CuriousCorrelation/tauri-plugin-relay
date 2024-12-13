@@ -84,23 +84,34 @@ export type FormDataValue =
 
 export type FormData = Map<string, FormDataValue[]>
 
+export enum MediaType {
+    TEXT_PLAIN = "text/plain",
+    TEXT_HTML = "text/html",
+    TEXT_CSS = "text/css",
+    TEXT_CSV = "text/csv",
+    APPLICATION_JSON = "application/json",
+    APPLICATION_LD_JSON = "application/ld+json",
+    APPLICATION_XML = "application/xml",
+    TEXT_XML = "text/xml",
+    APPLICATION_FORM = "application/x-www-form-urlencoded",
+    APPLICATION_OCTET = "application/octet-stream",
+    MULTIPART_FORM = "multipart/form-data"
+}
+
 export type ContentType =
-    | { kind: "text"; content: string; mediaType: "text/plain" | "text/html" | "text/css" | "text/csv" }
-    | { kind: "json"; content: unknown; mediaType: "application/json" | "application/ld+json" }
-    | { kind: "xml"; content: string; mediaType: "application/xml" | "text/xml" }
-    | { kind: "form"; content: FormData; mediaType: "application/x-www-form-urlencoded" }
-    | {
-        kind: "binary"
-        content: Uint8Array
-        mediaType: "application/octet-stream" | string
-        filename?: string
-    }
-    | { kind: "multipart"; content: FormData; mediaType: "multipart/form-data" }
-    | {
-        kind: "urlencoded"
-        content: Record<string, string>
-        mediaType: "application/x-www-form-urlencoded"
-    }
+    | { kind: "text"; content: string; mediaType: MediaType.TEXT_PLAIN | MediaType.TEXT_HTML | MediaType.TEXT_CSS | MediaType.TEXT_CSV }
+    | { kind: "json"; content: unknown; mediaType: MediaType.APPLICATION_JSON | MediaType.APPLICATION_LD_JSON }
+    | { kind: "xml"; content: string; mediaType: MediaType.APPLICATION_XML | MediaType.TEXT_XML }
+    | { kind: "form"; content: FormData; mediaType: MediaType.APPLICATION_FORM }
+    | { kind: "binary"; content: Uint8Array; mediaType: MediaType.APPLICATION_OCTET | string; filename?: string }
+    | { kind: "multipart"; content: FormData; mediaType: MediaType.MULTIPART_FORM }
+    | { kind: "urlencoded"; content: Record<string, string>; mediaType: MediaType.APPLICATION_FORM }
+    | { kind: "stream"; content: ReadableStream; mediaType: string }
+
+export interface ResponseBody<T = unknown> {
+    body: T
+    mediaType: MediaType | string
+}
 
 export type AuthType =
     | { kind: "none" }
@@ -206,7 +217,7 @@ export interface Response {
     httpOnly?: boolean
     sameSite?: 'Strict' | 'Lax' | 'None'
   }>
-  content: ContentType
+  body: ResponseBody
 
   meta: {
     timing: {
