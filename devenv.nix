@@ -34,7 +34,7 @@ in {
     ++ lib.optionals pkgs.stdenv.isLinux linuxPackages;
 
   env = {
-    APP_GREET = "Hoppscotch";
+    APP_GREET = "Hi!";
   } // lib.optionalAttrs pkgs.stdenv.isLinux {
     LD_LIBRARY_PATH = lib.makeLibraryPath [
       pkgs.libappindicator

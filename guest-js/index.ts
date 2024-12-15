@@ -108,8 +108,8 @@ export type ContentType =
     | { kind: "urlencoded"; content: Record<string, string>; mediaType: MediaType.APPLICATION_FORM }
     | { kind: "stream"; content: ReadableStream; mediaType: string }
 
-export interface ResponseBody<T = unknown> {
-    body: T
+export interface ResponseBody {
+    body: Uint8Array
     mediaType: MediaType | string
 }
 
@@ -252,9 +252,9 @@ export type RequestResult =
   | { kind: 'error'; error: RelayError }
 
 export async function execute(request: Request): Promise<RequestResult> {
-  return await invoke<RequestResult>('plugin:hoppscotch-relay|execute', { request })
+  return await invoke<RequestResult>('plugin:relay|execute', { request })
 }
 
 export async function cancel(requestId: number): Promise<void> {
-  return await invoke<void>('plugin:hoppscotch-relay|cancel', { requestId })
+  return await invoke<void>('plugin:relay|cancel', { requestId })
 }

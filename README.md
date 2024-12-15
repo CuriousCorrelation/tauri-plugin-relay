@@ -1,10 +1,10 @@
-# Tauri Plugin: Hoppscotch Relay
+# Tauri Plugin: Relay
 
 > A HTTP request-response relay plugin for Tauri apps, providing advanced request handling capabilities including custom headers, certificates, proxies, and local system integration.
 
 <div align="center">
 
-![GitHub License MIT](https://img.shields.io/github/license/CuriousCorrelation/tauri-plugin-hoppscotch-relay)
+![GitHub License MIT](https://img.shields.io/github/license/CuriousCorrelation/tauri-plugin-relay)
 ![Tauri 2.0](https://img.shields.io/badge/Tauri-2.0-blue)
 [![Rust](https://img.shields.io/badge/Rust-1.77.2+-orange)](https://www.rust-lang.org)
 
@@ -29,11 +29,11 @@ Add the plugin to your project by installing directly from GitHub:
 
 ```toml
 [dependencies]
-tauri-plugin-hoppscotch-relay = { git = "https://github.com/CuriousCorrelation/tauri-plugin-hoppscotch-relay" }
+tauri-plugin-relay = { git = "https://github.com/CuriousCorrelation/tauri-plugin-relay" }
 ```
 ``` json
 "dependencies": {
-  "@hoppscotch/plugin-relay": "github:CuriousCorrelation/tauri-plugin-hoppscotch-relay"
+  "@CuriousCorrelation/plugin-relay": "github:CuriousCorrelation/tauri-plugin-relay"
 }
 ```
 
@@ -44,7 +44,7 @@ tauri-plugin-hoppscotch-relay = { git = "https://github.com/CuriousCorrelation/t
 ```rust
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_hoppscotch_relay::init())
+        .plugin(tauri_plugin_relay::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -53,7 +53,7 @@ fn main() {
 ### JavaScript/TypeScript
 
 ```typescript
-import { execute, cancel } from '@hoppscotch/plugin-relay'
+import { execute, cancel } from '@CuriousCorrelation/plugin-relay'
 
 // Execute a request
 const result = await execute({

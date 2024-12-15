@@ -17,7 +17,7 @@ Default permissions for the plugin
 <tr>
 <td>
 
-`hoppscotch-relay:allow-cancel`
+`relay:allow-cancel`
 
 </td>
 <td>
@@ -30,7 +30,7 @@ Enables the cancel command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:deny-cancel`
+`relay:deny-cancel`
 
 </td>
 <td>
@@ -43,7 +43,7 @@ Denies the cancel command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:allow-execute`
+`relay:allow-execute`
 
 </td>
 <td>
@@ -56,7 +56,7 @@ Enables the execute command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:deny-execute`
+`relay:deny-execute`
 
 </td>
 <td>
@@ -69,7 +69,7 @@ Denies the execute command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:allow-run`
+`relay:allow-run`
 
 </td>
 <td>
@@ -82,7 +82,7 @@ Enables the run command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:deny-run`
+`relay:deny-run`
 
 </td>
 <td>
@@ -95,7 +95,7 @@ Denies the run command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:allow-subscribe`
+`relay:allow-subscribe`
 
 </td>
 <td>
@@ -108,7 +108,7 @@ Enables the subscribe command without any pre-configured scope.
 <tr>
 <td>
 
-`hoppscotch-relay:deny-subscribe`
+`relay:deny-subscribe`
 
 </td>
 <td>

@@ -17,46 +17,46 @@ mod models;
 pub use error::{Error, Result};
 
 #[cfg(desktop)]
-use desktop::HoppscotchRelay;
+use desktop::Relay;
 #[cfg(mobile)]
-use mobile::HoppscotchRelay;
+use mobile::Relay;
 
-pub trait HoppscotchRelayExt<R: Runtime> {
-    fn hoppscotch_relay(&self) -> &HoppscotchRelay<R>;
+pub trait RelayExt<R: Runtime> {
+    fn relay(&self) -> &Relay<R>;
 }
 
-impl<R: Runtime, T: Manager<R>> crate::HoppscotchRelayExt<R> for T {
-    fn hoppscotch_relay(&self) -> &HoppscotchRelay<R> {
-        tracing::trace!("Accessing HoppscotchRelay state");
-        self.state::<HoppscotchRelay<R>>().inner()
+impl<R: Runtime, T: Manager<R>> crate::RelayExt<R> for T {
+    fn relay(&self) -> &Relay<R> {
+        tracing::trace!("Accessing Relay state");
+        self.state::<Relay<R>>().inner()
     }
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    tracing::info!("Beginning hoppscotch-relay plugin initialization");
+    tracing::info!("Beginning relay plugin initialization");
 
-    Builder::new("hoppscotch-relay")
+    Builder::new("relay")
         .invoke_handler(tauri::generate_handler![commands::execute, commands::cancel])
         .setup(|app, api| {
-            tracing::info!("Setting up hoppscotch-relay plugin");
+            tracing::info!("Setting up relay plugin");
 
             #[cfg(mobile)]
             {
                 tracing::debug!("Initializing mobile-specific components");
-                let hoppscotch_relay = mobile::init(app, api)?;
+                let relay = mobile::init(app, api)?;
                 tracing::debug!("Mobile components initialized successfully");
-                app.manage(hoppscotch_relay);
+                app.manage(relay);
             }
 
             #[cfg(desktop)]
             {
                 tracing::debug!("Initializing desktop-specific components");
-                let hoppscotch_relay = desktop::init(app, api)?;
+                let relay = desktop::init(app, api)?;
                 tracing::debug!("Desktop components initialized successfully");
-                app.manage(hoppscotch_relay);
+                app.manage(relay);
             }
 
-            tracing::info!("hoppscotch-relay plugin setup complete");
+            tracing::info!("relay plugin setup complete");
             Ok(())
         })
         .build()

@@ -15,10 +15,10 @@ var MediaType;
     MediaType["MULTIPART_FORM"] = "multipart/form-data";
 })(MediaType || (MediaType = {}));
 async function execute(request) {
-    return await invoke('plugin:hoppscotch-relay|execute', { request });
+    return await invoke('plugin:relay|execute', { request });
 }
 async function cancel(requestId) {
-    return await invoke('plugin:hoppscotch-relay|cancel', { requestId });
+    return await invoke('plugin:relay|cancel', { requestId });
 }
 
 export { MediaType, cancel, execute };

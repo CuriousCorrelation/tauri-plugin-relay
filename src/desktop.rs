@@ -5,14 +5,14 @@ use tauri::{plugin::PluginApi, AppHandle, Runtime};
 pub fn init<R: Runtime, C: DeserializeOwned>(
     app: &AppHandle<R>,
     _api: PluginApi<R, C>,
-) -> Result<HoppscotchRelay<R>> {
-    tracing::debug!("Initializing HoppscotchRelay for desktop platform");
-    Ok(HoppscotchRelay(app.clone()))
+) -> Result<Relay<R>> {
+    tracing::debug!("Initializing Relay for desktop platform");
+    Ok(Relay(app.clone()))
 }
 
-pub struct HoppscotchRelay<R: Runtime>(AppHandle<R>);
+pub struct Relay<R: Runtime>(AppHandle<R>);
 
-impl<R: Runtime> HoppscotchRelay<R> {
+impl<R: Runtime> Relay<R> {
     pub async fn execute(&self, request: RunRequest) -> Result<ExecuteResponse> {
         tracing::debug!(?request, "Executing request");
 
