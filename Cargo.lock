@@ -522,7 +522,7 @@ checksum = "52560adf09603e58c9a7ee1fe1dcb95a16927b17c127f0ac02d6e768a0e25bc1"
 [[package]]
 name = "curl"
 version = "0.4.47"
-source = "git+https://github.com/CuriousCorrelation/curl-rust.git#1ec8079cf527b9cf47cc7a48c68b458affdae273"
+source = "git+https://github.com/CuriousCorrelation/curl-rust.git?rev=025ff84f77e1fee37b4dca3cf39b724f4efcc87d#025ff84f77e1fee37b4dca3cf39b724f4efcc87d"
 dependencies = [
  "curl-sys",
  "libc",
@@ -534,7 +534,7 @@ dependencies = [
 [[package]]
 name = "curl-sys"
 version = "0.4.77+curl-8.10.1"
-source = "git+https://github.com/CuriousCorrelation/curl-rust.git#1ec8079cf527b9cf47cc7a48c68b458affdae273"
+source = "git+https://github.com/CuriousCorrelation/curl-rust.git?rev=025ff84f77e1fee37b4dca3cf39b724f4efcc87d#025ff84f77e1fee37b4dca3cf39b724f4efcc87d"
 dependencies = [
  "cc",
  "libc",
@@ -662,7 +662,7 @@ dependencies = [
  "libc",
  "option-ext",
  "redox_users",
- "windows-sys 0.61.2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1452,7 +1452,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.3",
  "tokio",
  "tower-service",
  "tracing",
@@ -2686,13 +2686,15 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 [[package]]
 name = "relay"
 version = "0.1.1"
-source = "git+https://github.com/CuriousCorrelation/relay.git?rev=1c4f1e16106ed48983926ea6ddb114c1dbb2f688#1c4f1e16106ed48983926ea6ddb114c1dbb2f688"
+source = "git+https://github.com/CuriousCorrelation/relay.git?rev=0c9981650e935a7cf2eb7c93324f5d786656f456#0c9981650e935a7cf2eb7c93324f5d786656f456"
 dependencies = [
  "bytes",
  "cookie",
  "curl",
+ "curl-sys",
  "dashmap",
  "env_logger",
+ "foreign-types 0.3.2",
  "http",
  "http-serde",
  "infer 0.16.0",
@@ -2700,7 +2702,9 @@ dependencies = [
  "log",
  "mime",
  "openssl",
+ "openssl-probe",
  "openssl-sys",
+ "security-framework",
  "serde",
  "serde_json",
  "strum",
@@ -2711,6 +2715,7 @@ dependencies = [
  "url",
  "url-escape",
  "urlencoding",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -2833,6 +2838,29 @@ name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49"
+
+[[package]]
+name = "security-framework"
+version = "3.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
+dependencies = [
+ "bitflags 2.11.1",
+ "core-foundation",
+ "core-foundation-sys",
+ "libc",
+ "security-framework-sys",
+]
+
+[[package]]
+name = "security-framework-sys"
+version = "2.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ce2691df843ecc5d231c0b14ece2acc3efb62c0a398c7e1d875f3983ce020e3"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
+]
 
 [[package]]
 name = "selectors"
@@ -4356,7 +4384,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
