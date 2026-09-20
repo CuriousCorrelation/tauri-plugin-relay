@@ -2686,7 +2686,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 [[package]]
 name = "relay"
 version = "0.1.1"
-source = "git+https://github.com/CuriousCorrelation/relay.git?rev=1f8bd16c5610c1549f3e6bd90b0360568a68d68c#1f8bd16c5610c1549f3e6bd90b0360568a68d68c"
+source = "git+https://github.com/CuriousCorrelation/relay.git?rev=1726303b1c778440b0dda94a0525bbc8f65aa79c#1726303b1c778440b0dda94a0525bbc8f65aa79c"
 dependencies = [
  "bytes",
  "cookie",
